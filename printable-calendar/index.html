@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024-2025 Calendar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .year-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .year-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        #calendar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        .month {
+            width: 100%;
+            margin: 10px 0;
+            page-break-inside: avoid;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 2px;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: left;
+            padding: 6px;
+            height: 40px;
+            vertical-align: top;
+            width: calc(40px * 2.5);
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+            height: auto;
+            font-family: 'Lato', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+        }
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .month-name {
+            font-size: 35px;
+            font-weight: 300;
+            text-transform: uppercase;
+            font-family: 'Helvetica', sans-serif;
+        }
+        .year {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 15px;
+            border: 1px solid black;
+            position: relative;
+            left: -2px;
+        }
+        .date {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #888;
+        }
+        .month-spacer {
+            height: 60px;
+        }
+        .extra-spacer {
+            height: 120px;
+        }
+        @media print {
+            @page {
+                size: A4;
+                margin: 5mm;
+            }
+            body {
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+            .month {
+                width: 100%;
+                margin: 0 0 5mm 0;
+                page-break-inside: avoid;
+            }
+            .year-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="year-buttons">
+        <button class="year-button" onclick="updateCalendar(2024)">2024</button>
+        <button class="year-button" onclick="updateCalendar(2025)">2025</button>
+    </div>
+    <div id="calendar"></div>
+
+    <script>
+        function createCalendar(year) {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+            const calendarContainer = document.getElementById('calendar');
+            calendarContainer.innerHTML = ''; // Clear previous calendar
+
+            for (let month = 0; month < 12; month++) {
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'month';
+
+                // Add top spacer
+                const topSpacer = document.createElement('div');
+                topSpacer.className = 'month-spacer';
+                monthDiv.appendChild(topSpacer);
+
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `
+                    <div class="month-name">${monthNames[month]}</div>
+                    <div class="year">${year}</div>
+                `;
+                monthDiv.appendChild(monthHeader);
+
+                const table = document.createElement('table');
+                const headerRow = table.insertRow();
+                for (const day of daysOfWeek) {
+                    const th = document.createElement('th');
+                    th.textContent = day;
+                    headerRow.appendChild(th);
+                }
+
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                let currentDay = new Date(firstDay);
+
+                while (currentDay <= lastDay) {
+                    let row = table.insertRow();
+                    for (let i = 0; i < 7; i++) {
+                        let cell = row.insertCell();
+                        if (currentDay.getMonth() === month && currentDay <= lastDay) {
+                            if (currentDay.getDay() === i) {
+                                cell.innerHTML = `<div class="date">${currentDay.getDate()}</div>`;
+                                currentDay.setDate(currentDay.getDate() + 1);
+                            }
+                        }
+                    }
+                }
+
+                monthDiv.appendChild(table);
+
+                // Add bottom spacer
+                const bottomSpacer = document.createElement('div');
+                bottomSpacer.className = month % 2 === 0 ? 'extra-spacer' : 'month-spacer';
+                monthDiv.appendChild(bottomSpacer);
+
+                calendarContainer.appendChild(monthDiv);
+            }
+        }
+
+        function updateCalendar(year) {
+            createCalendar(year);
+        }
+
+        // Initial calendar creation
+        createCalendar(2024);
+    </script>
+</body>
+</html>

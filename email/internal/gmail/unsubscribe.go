@@ -15,10 +15,10 @@ func OpenUnsubscribeURL(rawHeader string) error {
 	if url == "" {
 		return fmt.Errorf("no HTTP unsubscribe URL found (header may contain only mailto links)")
 	}
-	return openBrowser(url)
+	return OpenBrowser(url)
 }
 
-func openBrowser(url string) error {
+func OpenBrowser(url string) error {
 	var cmd string
 	var args []string
 

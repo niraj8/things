@@ -82,6 +82,10 @@ func NewAppModel(store gmail.MessageStore, configDir string) AppModel {
 	ti.Placeholder = "Paste auth code here"
 	ti.Focus()
 
+	gl := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
+	// Remove esc from the list's built-in Quit binding so it doesn't exit on home
+	gl.KeyMap.Quit.SetKeys("q")
+
 	return AppModel{
 		store:        store,
 		configDir:    configDir,
@@ -90,7 +94,7 @@ func NewAppModel(store gmail.MessageStore, configDir string) AppModel {
 		uiEvents:     make(chan interface{}),
 		userResponses: make(chan string),
 		textInput:    ti,
-		groupsList:   list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
+		groupsList:   gl,
 		messagesList: list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 		bodyViewport: viewport.New(0, 0),
 	}
@@ -252,8 +256,6 @@ func (m *AppModel) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch key {
 		case "q":
 			return m, tea.Quit
-		case "esc":
-			return m, tea.Quit
 		case "enter":
 			return m.enterGroup()
 		case "e":
@@ -262,6 +264,9 @@ func (m *AppModel) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m.trashSelectedGroup()
 		case "u":
 			return m.unsubscribeSelectedGroup()
+		case "s":
+			m.status = "Syncing..."
+			return m, m.syncCmd()
 		}
 		var cmd tea.Cmd
 		m.groupsList, cmd = m.groupsList.Update(msg)
@@ -289,6 +294,12 @@ func (m *AppModel) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case "esc":
 			m.view = viewMessages
 			m.selectedMsg = nil
+			return m, nil
+		case "o":
+			if m.selectedMsg != nil {
+				url := fmt.Sprintf("https://mail.google.com/mail/u/0/#inbox/%s", m.selectedMsg.ID)
+				gmail.OpenBrowser(url)
+			}
 			return m, nil
 		}
 		var cmd tea.Cmd

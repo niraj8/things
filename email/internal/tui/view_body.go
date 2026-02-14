@@ -16,5 +16,5 @@ func bodyHeader(from, subject, date string) string {
 }
 
 func bodyFooter() string {
-	return footerStyle.Render("esc: back  q: quit")
+	return footerStyle.Render("o: open in gmail  esc: back  q: quit")
 }

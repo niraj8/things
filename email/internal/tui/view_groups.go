@@ -34,7 +34,7 @@ var footerStyle = lipgloss.NewStyle().
 	PaddingTop(1)
 
 func groupsFooter() string {
-	return footerStyle.Render("enter: open  e: archive  #: trash  u: unsubscribe  q: quit  @=unsubscribe available")
+	return footerStyle.Render("enter: open  e: archive  #: trash  u: unsubscribe  s: sync  q: quit  @=unsubscribe available")
 }
 
 func groupsToItems(groups []model.SenderGroup) []list.Item {

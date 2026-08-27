@@ -1,0 +1,6 @@
+# one domain per line, # for comments
+niraj.dev
+google.com
+learn.xyz
+lessons.xyz
+

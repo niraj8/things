@@ -1,0 +1,4 @@
+.scratch/
+node_modules/
+pendrive-recovery/
+.DS_Store
